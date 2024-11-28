@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MENU</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary: #3f160c;
+            --secondary: #23190f;
+            --bg:#754385;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #fff7f7;
+        }
+        
+        body {
+            background-color: var(--bg);
+            overflow-x: hidden;
+        }
+        
+        .slider {
+            background-color: var(--bg);
+            padding: 1rem;
+            margin: 7rem auto;
+            font: normal 1rem sans-serif;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 columns per row */
+            gap: 2rem;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        
+        @media screen and (max-width: 768px) {
+            .slider {
+                grid-template-columns: repeat(2, 1fr); /* Stack 2 cards per row on smaller screens */
+            }
+        }
+        
+        .card {
+            position: relative;
+            left: 0;
+            min-width: 17rem;
+            height: 23rem;
+            background-color: var(--primary);
+            color: #ce9b9b;
+            border-radius: 1rem;
+            border: .1rem solid transparent;
+            box-shadow: 0 .2rem .6rem #0003;
+            transition: .5s ease-in-out;
+        }
+        
+        .card:not(:first-child) {
+            margin-left: 2rem;
+        }
+        
+        .card:first-child {
+            margin-left: .4rem;
+        }
+        
+        .card:hover {
+            border: .1rem solid var(--secondary);
+            transform: scale(1.05);
+        }
+        
+        .card-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .card-content::before,
+        .card-content::after {
+            position: absolute;
+            content: "";
+            background-color: var(--secondary);
+            border-radius: 50%;
+            transition: .5s ease-in-out;
+        }
+        
+        .card-content::before {
+            top: -6%;
+            right: -6%;
+            width: 9rem;
+            height: 9rem;
+        }
+        
+        .card-content::after {
+            bottom: -6%;
+            left: -6%;
+            width: 5rem;
+            height: 5rem;
+        }
+        
+        .card-content:hover::before {
+            transform: scale(1.8);
+        }
+        
+        .card-content:hover::after {
+            transform: scale(0);
+        }
+        
+        .card-img,
+        .card-title {
+            transform: translateY(4rem);
+            transition: .5s ease-in-out;
+        }
+        
+        .card-img {
+            width: auto;
+            height: 9.5rem;
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            text-transform: capitalize;
+            transition-delay: .1s;
+        }
+        
+        .card-body,
+        .card-footer {
+            transform: translateY(8rem);
+            transition: .5s ease-in-out;
+        }
+        
+        .card-body {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            transition-delay: .2s;
+        }
+        
+        .card:hover .card-img,
+        .card:hover .card-title,
+        .card:hover .card-body,
+        .card:hover .card-footer {
+            transform: translateY(0);
+        }
+        
+        .card-footer {
+            transition-delay: .3s;
+        }
+        
+        .star {
+            font-size: 1.4rem;
+            color: gold;
+        }
+        
+        .card-price {
+            font: bolder 1.5rem sans-serif;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            background-color: unset;
+            border: none;
+            outline: none;
+            border-radius: 2rem;
+            color: #1a0d0d;
+            cursor: pointer;
+        }
+        
+        .btn-success {
+            background-color: var(--secondary);
+            color: #fff;
+        }
+        
+        .btn-border {
+            border: .1rem solid var(--secondary);
+            color: #060000;
+            background-color: transparent;
+        }
+        
+        .btn:hover {
+            background-color: #fff;
+            color: var(--secondary);
+            border: .1rem solid var(--secondary);
+        }
+        
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3rem;
+            height: 3rem;
+            background-color: #ce9b9b;
+            color: #000;
+            border-radius: 50%;
+            outline: .5rem solid transparent;
+            font: 800 1.5rem sans-serif;
+            text-align: center;
+            line-height: 3rem;
+            user-select: none;
+            cursor: pointer;
+            transition: .5s ease-in-out;
+            z-index: 200;
+        }
+        
+        .arrow:active {
+            background-color: #ddd;
+        }
+        
+        .left {
+            left: 1rem;
+        }
+        
+        .right {
+            right: 1rem;
+        }
+        
+        .shopping-cart {
+            position: absolute;
+            right: 1rem;
+            bottom: 1rem;
+            width: 4rem;
+            height: 4rem;
+            background-color: #ce9b9b;
+            border-radius: 50%;
+            outline: .5rem solid transparent;
+            text-align: center;
+            line-height: 4rem;
+            cursor: pointer;
+            box-shadow: 0 .2rem .6rem #0006;
+            transition: .5s ease-in-out;
+        }
+        
+        .shopping-cart.active {
+            width: 8rem;
+            border-radius: .8rem;
+        }
+        
+        .shopping-cart.active>span {
+            margin-left: -4rem;
+        }
+        
+        .arrow:hover,
+        .shopping-cart:hover {
+            outline: .5rem solid rgba(248, 245, 245, 0.333);
+        }
+        
+        .shopping-cart::before {
+            position: absolute;
+            content: attr(data-product-count);
+            top: -.5rem;
+            right: -.5rem;
+            width: 2rem;
+            height: 2rem;
+            color: #fff;
+            background-color: rgb(16, 73, 91);
+            font-family: sans-serif;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 2rem;
+        }
+        
+        .cart-icon {
+            font-size: 2rem;
+            transition: .5s ease-in-out;
+        }
+        
+        .flying-img {
+            position: absolute;
+            animation: fly_to_cart 1s ease-in-out;
+        }
+        
+        @keyframes fly_to_cart {
+            0% {
+                left: 0;
+                top: 0;
+            }
+            45%,
+            50% {
+                left: var(--left);
+                top: 60px;
+            }
+            80%,
+            90% {
+                left: var(--left);
+                top: var(--top);
+                transform: scale(.2);
+            }
+            100% {
+                left: calc(var(--left) + 40px);
+                top: var(--top);
+                transform: scale(.2);
+            }
+        }
+        /* Main container for the marquee */
+.discount-marquee {
+    width: 100%;
+    background: linear-gradient(45deg, #ff7f50, #ff6347); /* Gradient background for a modern look */
+    color: #fff; /* White text color */
+    font-size: 1.5rem; /* Larger text for better visibility */
+    font-family: 'Arial', sans-serif; /* Clean and readable font */
+    text-align: center;
+    padding: 0.8rem 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow to add depth */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Style for the scrolling text */
+.discount-marquee p {
+    margin: 0;
+    white-space: nowrap;
+    animation: scroll-left 12s linear infinite; /* Slower, smoother scroll effect */
+    font-weight: bold; /* Makes the text stand out */
+    text-transform: uppercase; /* Uppercase for emphasis */
+}
+
+/* Adding an underline effect to the discount text */
+.discount-marquee p span {
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 1.8rem; /* Slightly larger for the discount part */
+    color: #fefefe;
+    padding: 0 10px;
+}
+
+/* Keyframes for the scrolling animation */
+@keyframes scroll-left {
+    0% {
+        transform: translateX(100%); /* Start from the right */
+    }
+    100% {
+        transform: translateX(-100%); /* Move to the left */
+    }
+}
+/* CSS for animating the cart when an item is added */
+.shopping-cart {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    width: 4rem;
+    height: 4rem;
+    background-color: #2e1111;
+    border-radius: 50%;
+    outline: .5rem solid transparent;
+    text-align: center;
+    line-height: 4rem;
+    cursor: pointer;
+    box-shadow: 0 .2rem .6rem #0006;
+    transition: .5s ease-in-out;
+    z-index: 200;
+    animation: cart-bounce 0.5s ease-out infinite;
+}
+
+/* Bouncing effect */
+@keyframes cart-bounce {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+/* Main container for the marquee */
+.discount-marquee {
+    width: 100%;
+    background: linear-gradient(45deg, #ebe8e7, #2d0c06); /* Gradient background */
+    color: #fff; /* White text color */
+    font-size: 1.5rem; /* Larger text */
+    font-family: 'Arial', sans-serif; /* Clean, readable font */
+    text-align: center;
+    padding: 0.8rem 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Style for the scrolling text */
+.discount-marquee p {
+    margin: 0;
+    white-space: nowrap;
+    animation: scroll-left 12s linear infinite; /* Slower scroll */
+    font-weight: bold; /* Make text bold */
+    text-transform: uppercase; /* Uppercase text */
+}
+
+/* Adding an underline effect to the discount text */
+.discount-marquee p span {
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 1.8rem; /* Slightly larger text */
+    color: #38130c;
+    padding: 0 10px;
+}
+
+/* Keyframes for the scrolling animation */
+@keyframes scroll-left {
+    0% {
+        transform: translateX(100%); /* Start from the right */
+    }
+    100% {
+        transform: translateX(-100%); /* End at the left */
+    }
+}
+
+
+/* Scale animation when cart grows bigger */
+.shopping-cart.active {
+    width: 8rem;
+    border-radius: .8rem;
+}
+
+/* Shopping cart icon for displaying the count of items */
+.shopping-cart.active > span {
+    margin-left: -4rem;
+}
+
+/* Animation for flying the item to the cart */
+.flying-img {
+    position: absolute;
+    animation: fly_to_cart 1s ease-in-out;
+}
+
+/* Keyframes for flying animation */
+@keyframes fly_to_cart {
+    0% {
+        left: 0;
+        top: 0;
+    }
+    45%, 50% {
+        left: var(--left);
+        top: 60px;
+    }
+    80%, 90% {
+        left: var(--left);
+        top: var(--top);
+        transform: scale(0.2);
+    }
+    100% {
+        left: calc(var(--left) + 40px);
+        top: var(--top);
+        transform: scale(0.2);
+    }
+}
+
+
+    </style>
+
+
+</head>
+
+<body>
+  <!-- Discount Marquee -->
+<div class="discount-marquee">
+    <p>Big Sale! <span>Up to 50% OFF on Selected Items!</span></p>
+    <p><span> SALE ON ORDERS ABOVW $500 </span><p>
+</div>
+
+    <section class="slider">
+        <div class="card">
+<!-- Discount Marquee -->
+
+
+            <div class="card-content">
+                <img src="belgian chocolate mousse.jpg" alt="" class="card-img">
+                <img src="book 3.jpg" alt="test image" height="180" width="140">
+                <h1 class="card-title">Story tales</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.5</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$650.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="book 8.jpg" alt="" class="card-img" height="70" width="70">
+                <h1 class="card-title">Pride & Prejudice</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$550.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="java chip frappuccino.jpeg" alt="" class="card-img">
+                <img src="book 7.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">Gulliver Travels</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.6</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$750.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="java chip frappuccino.jpeg" alt="" class="card-img">
+                <img src="book 3.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">Apple iPhone 12 Pro</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.7</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$1000.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="mocha cookie crumblr frappuccino.jpeg" alt="" class="card-img">
+                <img src="book 10.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">g233 prodigy gaming headset</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.5</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$450.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="lavendar tea.jpeg" alt="" class="card-img">
+                <img src="book 1.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">Nike Running Shoese</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.5</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$250.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="lemon iced tea.jpeg" alt="" class="card-img">
+                <img src="book 9.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">Running Shoes</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.4</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$150.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+                
+            </div>
+        </div>
+        <div class="card">
+            
+
+            <div class="card-content">
+                <img src="belgian chocolate mousse.jpg" alt="" class="card-img">
+                <img src="book 2.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">HP Spectre x360 15</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.5</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$650.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="caramel frappucino.jpeg" alt="" class="card-img">
+                <img src="book 6.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">HP Spectre x360 15</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$550.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="club sandwich.jpeg" alt="" class="card-img">
+                <img src="book 5.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">Apple Ipad 15</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.6</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$750.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="java chip frappuccino.jpeg" alt="" class="card-img">
+                <img src="book 4.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">Apple iPhone 12 Pro</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.7</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$1000.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="mocha cookie crumblr frappuccino.jpeg" alt="" class="card-img">
+                <img src="book 1.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">g233 prodigy gaming headset</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.5</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$450.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="sphaghetti arabiata.jpeg" alt="" class="card-img">
+                <img src="book 2.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">ROG Strixm Wireless gaming</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.4</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$350.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="lavendar tea.jpeg" alt="" class="card-img">
+                <img src="book 9.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">Nike Running Shoese</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.5</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$250.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <img src="lemon iced tea.jpeg" alt="" class="card-img">
+                <img src="book 10.jpg" alt="test image" height="70" width="70">
+                <h1 class="card-title">Running Shoes</h1>
+                <div class="card-body">
+                    <div class="card-star">
+                        <span class="rating-value">4.4</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <p class="card-price">$150.99</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success">Buy Now</button>
+                    <button class="btn btn-border add-to-cart">Add To Cart</button>
+                </div>
+            </div>
+        </div>
+
+
+        <span class="arrow left">&#129120;</span>
+        <span class="arrow right">&#129122;</span>
+
+    </section>
+    <div class="shopping-cart" data-product-count="0">
+        <span class="cart-icon">&#128722;</span>
+        
+    </div>
+    
+    
+    
+    <script src="mc.js"></script>
+</body>
+
+</html>
